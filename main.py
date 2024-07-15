@@ -1,4 +1,5 @@
 import ipaddress
+import requests
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -9,6 +10,10 @@ class MySettings(BaseSettings):
 
 class UpdateIP(BaseModel):
     nueva_ip: str
+    clave: str
+
+class UpdateState(BaseModel):
+    accion: str
     clave: str
 
 settings = MySettings()
@@ -41,3 +46,23 @@ def set_ip(req : UpdateIP):
         return {"es_valido": True, "nueva_ip": req.nueva_ip}
     else:
         raise HTTPException(status_code=401, detail="Clave inválida")
+
+@app.get("/status")
+def get_status():
+    try: 
+        r = requests.get(settings.get_status_url)
+        return r.json()
+
+    except requests.RequestException:
+        raise HTTPException(status_code=500, detail="Servicio interno no disponible")
+
+@app.post("/status")
+def set_status(req : UpdateState): 
+
+    r = requests.post(settings.get_status_url, 
+        data={
+            'action': req.accion,
+            'key': req.clave,
+            }
+        )
+    return r.status_code 
