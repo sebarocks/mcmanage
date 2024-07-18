@@ -1,9 +1,11 @@
 import ipaddress
 import requests
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.wsgi import WSGIMiddleware
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dns_updater import updateRecord
+from wsgiproxy import HostProxy
 
 class MySettings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env',extra='allow')
@@ -66,3 +68,5 @@ def set_status(req : UpdateState):
             }
         )
     return r.status_code 
+
+app.mount("/map", WSGIMiddleware(HostProxy(settings.dynmap_server)))
