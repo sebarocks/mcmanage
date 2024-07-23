@@ -6,6 +6,8 @@ from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dns_updater import updateRecord
 from wsgiproxy import HostProxy
+from mc_utils import parseTime, MCTime
+from db import read_ip, write_ip
 
 class MySettings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env',extra='allow')
@@ -61,3 +63,13 @@ def set_status(req : UpdateState):
     return r.status_code 
 
 app.mount("/map", WSGIMiddleware(HostProxy(settings.dynmap_server)))
+
+@app.get("/time")
+def get_time():
+    try: 
+        r = requests.get(settings.dynmap_json_url)
+        timestr = r.json()['servertime']
+        return parseTime(timestr)
+
+    except requests.RequestException:
+        raise HTTPException(status_code=500, detail="Servicio interno no disponible")
