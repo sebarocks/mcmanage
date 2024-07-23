@@ -73,3 +73,27 @@ def get_time():
 
     except requests.RequestException:
         raise HTTPException(status_code=500, detail="Servicio interno no disponible")
+
+@app.get("/players")
+def get_players():
+    try: 
+        r = requests.get(settings.dynmap_json_url)
+        players = r.json()['players']
+        return [ player['name'] for player in players ]
+
+    except requests.RequestException:
+        raise HTTPException(status_code=500, detail="Servicio interno no disponible")
+
+@app.get("/player/{name}")
+def get_player_by_name(name : str):
+    try: 
+        r = requests.get(settings.dynmap_json_url)
+        players = r.json()['players']
+        for player in players:
+            if player['name'] == name:
+                return player
+        raise HTTPException(status_code=404, detail="Jugador no encontrado")
+
+    except requests.RequestException:
+        raise HTTPException(status_code=500, detail="Servicio interno no disponible")
+ 
