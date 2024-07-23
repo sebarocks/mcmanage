@@ -21,18 +21,9 @@ class UpdateState(BaseModel):
 settings = MySettings()
 app = FastAPI()
 
-def read_file():
-    with open("ip.txt", "r") as archivo:
-        contenido = archivo.read()
-    return contenido
-
-def write_file(ipstr):
-    with open("ip.txt", "w") as archivo:
-        contenido = archivo.write(ipstr)
-
 @app.get("/IP")
 def get_ip():
-    return read_file()
+    return read_ip()
 
 @app.post("/IP/update")
 def set_ip(req : UpdateIP):
@@ -43,7 +34,7 @@ def set_ip(req : UpdateIP):
         raise HTTPException(status_code=400, detail="Formato de IP inválido")
 
     if req.clave == settings.master_key:
-        write_file(req.nueva_ip)
+        write_ip(req.nueva_ip)
         updateRecord(req.nueva_ip, settings.linode_token)
         return {"es_valido": True, "nueva_ip": req.nueva_ip}
     else:
