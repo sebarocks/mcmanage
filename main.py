@@ -139,10 +139,8 @@ def checkActivity():
 
     if datetime.fromisoformat(last_active) < cutoff_time:
         print("server inactivo :/ apagando...")
-        r = requests.post(
-            settings.get_status_url, 
-            data={ 'action': 'stop', 'key': settings.master_key }
-        )
+        payload = { 'action': 'stop', 'key': settings.ec2_key }
+        r = requests.post(settings.get_status_url, data=json.dumps(payload))
         print(r.json())
     else:
         print("last activity:",last_active)
