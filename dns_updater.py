@@ -1,5 +1,7 @@
 import requests
 
+from settings import my_settings
+from db import Log
 
 def updateRecord(stringIP: str, linodeToken: str):
 
@@ -27,10 +29,10 @@ def updateRecord(stringIP: str, linodeToken: str):
 
     # Check if the update was successful
     if response.status_code == 200:
-        print('DNS record updated successfully!')
-        print(response.json())
+        Log.write('DNS record updated successfully!')
+        Log.write(response.json())
     else:
-        print(f'Failed to update DNS record: {response.status_code}')
-        print(response.json())
+        Log.write(f'Failed to update DNS record: {response.status_code}')
+        Log.write(response.json())
         
 

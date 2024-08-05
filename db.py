@@ -1,7 +1,9 @@
 import json
+from datetime import datetime
 
 IP_DB = "ip.txt"
 LASTACTIVE_DB = "last.json"
+LOG_DB = "log.txt"
 
 def read_ip():
     with open(IP_DB, "r") as archivo:
@@ -19,6 +21,21 @@ def read_lastactive():
 def write_lastactive(data):
     with open(LASTACTIVE_DB, 'w') as f:
         json.dump(data, f, indent=4)
+
+class Log:
+
+    @staticmethod
+    def read():
+        with open(LOG_DB, "r") as archivo:
+            contenido = archivo.read()
+        return contenido
+
+    @staticmethod
+    def write(str):
+        nowstr = datetime.utcnow().isoformat()
+        with open(LOG_DB, "a") as archivo:
+            contenido = archivo.write(f"[{nowstr}] {str} \n")
+
 
 authorized_starters = [
     'Seba',
