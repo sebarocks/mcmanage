@@ -1,9 +1,9 @@
 import json
 from datetime import datetime
 
-IP_DB = "ip.txt"
-LASTACTIVE_DB = "last.json"
-LOG_DB = "log.txt"
+IP_DB = "db/ip.txt"
+LASTACTIVE_DB = "db/last.json"
+LOG_DB = "db/log.txt"
 
 def read_ip():
     with open(IP_DB, "r") as archivo:

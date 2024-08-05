@@ -10,6 +10,6 @@ env/
 venv/
 
 # database :P
-ip.txt
-last.json
-log.txt
+db/ip.txt
+db/last.json
+db/log.txt
