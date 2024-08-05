@@ -123,3 +123,8 @@ def get_player_by_name(name : str):
 def get_last():
     dif = activity.timeSinceLast()
     return f"Ultima actividad: Hace {dif.seconds // 3600}h {(dif.seconds % 3600) / 60}m"
+
+# publico
+@app.get("/offline")
+def offline():
+    return "Server esta offline. Funcion no disponible"

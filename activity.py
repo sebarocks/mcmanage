@@ -40,7 +40,7 @@ def checkActivity():
     else:
         db.Log.write("last activity: ", last_active)
 
-def timeSinceActivity():
+def timeSinceLast():
     now = datetime.utcnow()
     last = datetime.fromisoformat(db.read_lastactive())
     dif = now - last
