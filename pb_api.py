@@ -2,7 +2,7 @@ import json
 import urllib.parse
 
 from fastapi import FastAPI, Request
-from pocketbase import Client as Pocketbase
+from pocketbase import PocketBase
 from pocketbase.stores.base_auth_store import BaseAuthStore
 from pocketbase.models.record import Record
 from datetime import datetime
@@ -24,10 +24,10 @@ def pbLoadCookie(cookie_str):
     cookie_decoded = urllib.parse.unquote(cookie_str)
     pb_auth = json.loads(cookie_decoded)
     auth_store = ServerAuthStore(pb_auth)
-    pb = Pocketbase(my_settings.pocketbase_url, auth_store=auth_store)
+    pb = PocketBase(my_settings.pocketbase_url, auth_store=auth_store)
     return pb
 
-def pbLoadUser(pb : Pocketbase):
+def pbLoadUser(pb : PocketBase):
     user_id = pb.auth_store.base_model.id
     user = pb.collection("users").get_one(user_id)
     return user
