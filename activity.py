@@ -7,7 +7,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
 
 from settings import my_settings
-
+from api_service import Dynmap
 
 # Setea server como activo
 def setActive():
@@ -18,7 +18,7 @@ def setActive():
 
 # Cada 1 minuto o cada 5 minutos
 def checkPlayers():    
-    players = get_players()
+    players = Dynmap.get_players()
     db.Log.write(len(players) + " players online")
 
     if len(players) > 0:

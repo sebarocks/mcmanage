@@ -13,7 +13,7 @@ from settings import my_settings
 from cors import corsMiddleware
 from dns_updater import updateRecord
 from mc_utils import parseTime, MCTime
-
+from api_service import Dynmap
 
 class UpdateIP(BaseModel):
     nueva_ip: str
@@ -27,13 +27,11 @@ class UpdateState(BaseModel):
 app = FastAPI()
 
 if my_settings.pb_enabled:
-    print('pb_enabled')
     app.mount("/pb", pb_api.pbapi)
     app.add_middleware(**corsMiddleware)
     db.Log.write("Pocketbase started")
 
 if my_settings.activity_check_enabled:
-    print('activity_check_enabled')
     activity.scheduler.start()
     db.Log.write("Scheduler started")
 
@@ -86,10 +84,7 @@ def set_status(req : UpdateState):
 @app.get("/time")
 def get_time():
     try: 
-        r = requests.get(my_settings.dynmap_json_url, timeout=3)
-        timestr = r.json()['servertime']
-        return parseTime(timestr)
-
+        return Dynmap.get_time()
     except requests.RequestException:
         raise HTTPException(status_code=500, detail="Servicio interno no disponible")
 
@@ -97,10 +92,7 @@ def get_time():
 @app.get("/players")
 def get_players():
     try: 
-        r = requests.get(my_settings.dynmap_json_url, timeout=3)
-        players = r.json()['players']
-        return [ player['name'] for player in players ]
-
+        return Dynmap.get_players()
     except requests.RequestException:
         raise HTTPException(status_code=500, detail="Servicio interno no disponible")
 
@@ -108,12 +100,12 @@ def get_players():
 @app.get("/player/{name}")
 def get_player_by_name(name : str):
     try: 
-        r = requests.get(my_settings.dynmap_json_url, timeout=3)
-        players = r.json()['players']
-        for player in players:
-            if player['name'] == name:
-                return player
-        raise HTTPException(status_code=404, detail="Jugador no encontrado")
+        player = Dynmap.get_player(name)
+
+        if player is None:
+            raise HTTPException(status_code=404, detail="Jugador no encontrado")
+        else:
+            return player
 
     except requests.RequestException:
         raise HTTPException(status_code=500, detail="Servicio interno no disponible")
@@ -127,4 +119,4 @@ def get_last():
 # publico
 @app.get("/offline")
 def offline():
-    return "Server esta offline. Funcion no disponible"
+    return HTTPException(status_code=404, detail="Server esta offline. Funcion no disponible")
