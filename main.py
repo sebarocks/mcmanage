@@ -74,7 +74,7 @@ def set_status(req : UpdateState):
     r = requests.post(my_settings.get_status_url, data=json.dumps(payload))
 
     if r.status_code == 200 and req.accion == 'start':
-        setActive()
+        activity.setActive()
 
     return r.json()
 
@@ -84,7 +84,7 @@ def set_status(req : UpdateState):
 def get_time():
     try: 
         return Dynmap.get_time()
-    except requests.RequestException:
+    except:
         raise HTTPException(status_code=500, detail="Servicio interno no disponible")
 
 # publico
@@ -92,7 +92,7 @@ def get_time():
 def get_players():
     try: 
         return Dynmap.get_players()
-    except requests.RequestException:
+    except:
         raise HTTPException(status_code=500, detail="Servicio interno no disponible")
 
 # publico
@@ -118,4 +118,4 @@ def get_last():
 # publico
 @app.get("/offline")
 def offline():
-    return HTTPException(status_code=404, detail="Server esta offline. Funcion no disponible")
+    return HTTPException(status_code=404, detail="Funcion no disponible")
