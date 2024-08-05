@@ -19,7 +19,7 @@ def setActive():
 # Cada 1 minuto o cada 5 minutos
 def checkPlayers():    
     players = Dynmap.get_players()
-    db.Log.write(len(players) + " players online")
+    db.Log.write(f"{len(players)} players online")
 
     if len(players) > 0:
         now = datetime.utcnow()
@@ -38,7 +38,7 @@ def checkActivity():
         r = requests.post(my_settings.get_status_url, data=json.dumps(payload))
         db.Log.write(r.json())
     else:
-        db.Log.write("last activity: ", last_active)
+        db.Log.write(f"last activity: {last_active}")
 
 def timeSinceLast():
     now = datetime.utcnow()

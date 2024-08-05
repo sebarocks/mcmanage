@@ -12,7 +12,6 @@ from pydantic import BaseModel
 from settings import my_settings
 from cors import corsMiddleware
 from dns_updater import updateRecord
-from mc_utils import parseTime, MCTime
 from api_service import Dynmap
 
 class UpdateIP(BaseModel):
