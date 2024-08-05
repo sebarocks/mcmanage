@@ -1,0 +1,7 @@
+services:
+  mcmanage:
+    build: .
+    ports:
+      - "8032:8000"
+    volumes:
+      - ./db:/app/db
