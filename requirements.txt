@@ -3,6 +3,8 @@ anyio==4.4.0
 apscheduler==3.10.4
 certifi==2024.7.4
 charset-normalizer==3.3.2
+click==8.1.7
+colorama==0.4.6
 fastapi==0.112.0
 h11==0.14.0
 httpcore==0.17.3
@@ -23,3 +25,4 @@ typing-extensions==4.12.2
 tzdata==2024.1
 tzlocal==5.2
 urllib3==2.2.2
+uvicorn==0.30.5
