@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from settings import my_settings
 from cors import corsMiddleware
 from dns_updater import updateRecord
-from api_service import Dynmap
+from api_service import Dynmap, Aws
 
 class UpdateIP(BaseModel):
     nueva_ip: str
@@ -59,8 +59,7 @@ def set_ip(req : UpdateIP):
 @app.get("/status")
 def get_status():
     try: 
-        r = requests.get(my_settings.get_status_url)
-        return r.json()
+        return Aws.get_status()
 
     except requests.RequestException:
         raise HTTPException(status_code=500, detail="Servicio interno no disponible")
@@ -113,7 +112,7 @@ def get_player_by_name(name : str):
 @app.get("/last")
 def get_last():
     dif = activity.timeSinceLast()
-    return f"Ultima actividad: Hace {dif.seconds // 3600}h {(dif.seconds % 3600) / 60}m"
+    return f"Ultima actividad: Hace {dif.seconds // 3600}h {(dif.seconds % 3600) // 60}m"
 
 # publico
 @app.get("/offline")

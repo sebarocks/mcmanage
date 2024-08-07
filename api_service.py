@@ -26,3 +26,10 @@ class Dynmap:
         r = requests.get(my_settings.dynmap_json_url, timeout=3)
         timestr = r.json()['servertime']
         return parseTime(timestr)
+
+class Aws:
+
+    @staticmethod
+    def get_status():
+        r = requests.get(my_settings.get_status_url)
+        return r.json()
