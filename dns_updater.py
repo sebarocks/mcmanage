@@ -7,8 +7,8 @@ def updateRecord(stringIP: str, linodeToken: str):
 
     # Replace these variables with your information
     LINODE_TOKEN = linodeToken
-    DOMAIN_ID = '2978739'
-    RECORD_ID = '35481449'
+    DOMAIN_ID = my_settings.linode_domain_id
+    RECORD_ID = my_settings.linode_record_id
 
     # Linode API endpoint for updating a DNS record
     url = f'https://api.linode.com/v4/domains/{DOMAIN_ID}/records/{RECORD_ID}'
