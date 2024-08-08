@@ -47,8 +47,8 @@ pbapi = FastAPI()
 def start_server(request: Request):
     pb, user = pbLoad(request)
     if user is not None:
-        res = Aws.start_server()        
-        message = f"Usuario {user.username} solicito iniciar server desde IP: {req.client.host}. Respuesta: {res.status_code}"
+        res = Aws.start_server()
+        message = f"Usuario {user.username} solicito iniciar server desde IP: {request.client.host}. Respuesta: {res.status_code}"
         Log.write(message)
         return message
     else:
