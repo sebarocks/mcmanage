@@ -33,3 +33,13 @@ class Aws:
     def get_status():
         r = requests.get(my_settings.get_status_url)
         return r.json()
+
+    @staticmethod
+    def start_server():
+        payload = { 'action': 'start', 'key': my_settings.ec2_key }
+        r = requests.post(my_settings.get_status_url, data=json.dumps(payload))
+
+        if r.status_code == 200:
+            activity.setActive()
+
+        return r.json()

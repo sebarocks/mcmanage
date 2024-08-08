@@ -9,6 +9,7 @@ from datetime import datetime
 
 from settings import my_settings
 from activity import setActive
+from api_service import Aws
 from db import Log
 
 
@@ -33,29 +34,21 @@ def pbLoadUser(pb : PocketBase):
     return user
 
 def pbLoad(request : Request):
-    try:
-        cookie_str = request.cookies.get("pb_auth")
-        pb = pbLoadCookie(cookie_str)
-        user = pbLoadUser(pb)
-        return pb, user
-    except:
-        return None, None
+    cookie_str = request.cookies.get("pb_auth")
+    pb = pbLoadCookie(cookie_str)
+    user = pbLoadUser(pb)
+    return pb, user
 
 
 pbapi = FastAPI()
 
 
 @pbapi.post("/start")
-def start_server():
+def start_server(request: Request):
     pb, user = pbLoad(request)
     if user is not None:
-        payload = { 'action': 'start', 'key': my_settings.ec2_key }
-        r = requests.post(my_settings.get_status_url, data=json.dumps(payload))
-        
-        if r.status_code == 200:
-            setActive()
-        
-        message = f"Usuario {user.username} solicito iniciar server desde IP: {req.client.host}. Respuesta: {r.status_code}"
+        res = Aws.start_server()        
+        message = f"Usuario {user.username} solicito iniciar server desde IP: {req.client.host}. Respuesta: {res.status_code}"
         Log.write(message)
         return message
     else:
@@ -65,6 +58,8 @@ def start_server():
 @pbapi.post("/verify")
 def verify(request: Request):
     pb, user = pbLoad(request)
+    if user is None:
+        return False
     return user
 
 
