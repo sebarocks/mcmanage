@@ -37,6 +37,8 @@ if my_settings.activity_check_enabled:
 # publico
 @app.get("/IP")
 def get_ip():
+    if not Aws.serverOn():
+        return '-'
     return db.read_ip()
 
 # privado. uso por AWS
