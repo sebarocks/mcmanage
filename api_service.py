@@ -1,7 +1,10 @@
 import requests
 import json
+import warnings
 
 import activity
+
+from urllib3.exceptions import InsecureRequestWarning
 
 from settings import my_settings
 from mc_utils import parseTime
@@ -64,3 +67,59 @@ class Aws:
             activity.setActive()
 
         return r
+
+
+class ServerTap:
+
+    @staticmethod
+    def get_time():
+        if not Aws.serverOn():
+            return "Server Offline"
+        
+        world_uuid = my_settings.main_world_uuid
+        auth_header = {'key': my_settings.servertap_key}
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=InsecureRequestWarning)
+            r = requests.get(my_settings.servertap_url + '/worlds/' + world_uuid, headers=auth_header, timeout=3, verify = False)
+
+        timestr = r.json()['time']
+        return parseTime(timestr)
+
+    @staticmethod
+    def get_players():
+        if not Aws.serverOn():
+            return None
+
+        auth_header = {'key': my_settings.servertap_key}
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=InsecureRequestWarning)
+            r = requests.get(my_settings.servertap_url + '/players', headers=auth_header, timeout=3, verify = False)
+
+        players = r.json()
+        return [ player['displayName'] for player in players ]
+
+    @staticmethod
+    def get_player_info(name):
+        if not Aws.serverOn():
+            return None
+
+        auth_header = {'key': my_settings.servertap_key}
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=InsecureRequestWarning)
+            r = requests.get(my_settings.servertap_url + '/players', headers=auth_header, timeout=3, verify = False)
+        
+        players = r.json()
+
+        for player in players:
+            if player['displayName'] == name:
+                return {
+                    'name': player['displayName'],
+                    'dimension': player['dimension'],
+                    'location': player.get('location',[]),
+                    'health': player.get('health',''),
+                    'hunger': player.get('hunger',''),
+                    'saturation': player.get('saturation','')
+                }
