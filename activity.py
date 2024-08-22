@@ -7,7 +7,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
 
 from settings import my_settings
-from api_service import Dynmap, Aws
+from api_service import Aws, ServerTap
 
 # Setea server como activo
 def setActive():
@@ -22,7 +22,7 @@ def checkPlayers():
     if Aws.get_status()['instanceState'] == 'stopped':
         return
 
-    players = Dynmap.get_players()
+    players = ServerTap.get_players()
     db.Log.write(f"{len(players)} players online")
 
     if len(players) > 0:
