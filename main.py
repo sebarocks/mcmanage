@@ -6,7 +6,8 @@ import db
 import pb_api
 import activity
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Header
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
 
 from settings import my_settings
@@ -22,6 +23,8 @@ class UpdateState(BaseModel):
     accion: str
     clave: str
 
+class ReadLogs(BaseModel):
+    clave: str
 
 app = FastAPI()
 
@@ -35,7 +38,7 @@ if my_settings.activity_check_enabled:
     db.Log.write("Scheduler started")
 
 # publico
-@app.get("/IP")
+@app.get("/IP", response_class=PlainTextResponse)
 def get_ip():
     if not Aws.serverOn():
         return '-'
@@ -120,3 +123,16 @@ def get_last():
 @app.get("/offline")
 def offline():
     return HTTPException(status_code=404, detail="Funcion no disponible")
+
+#privado. Solo Admin
+@app.get("/logs", response_class=PlainTextResponse)
+def get_logs(key: str = Header(None)):
+
+    if key is not None:
+        if key == my_settings.master_key:
+            return db.Log.read()
+    else:
+        return "No autorizado"
+
+
+        
